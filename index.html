@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>DAV Public Schools, Bihar Zone – CBT Application</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Preload + stylesheet for better performance -->
+  <link rel="preload" href="assets/css/app.css" as="style">
+  <link rel="stylesheet" href="assets/css/app.css">
+  <noscript><link rel="stylesheet" href="assets/css/app.css"></noscript>
+
+  <meta name="description" content="CBT Application Form for DAV Public Schools, Bihar Zone (Draft → Preview → Final Submit)">
+</head>
+<body>
+
+  <!-- Header / Branding -->
+  <header class="header">
+    <div class="wrap">
+      <div class="title">
+        <img src="assets/img/DAVlogo.png" alt="DAV Public Schools logo" class="dav-logo" width="64" height="64">
+        <div>
+          <h1>DAV Public Schools, Bihar Zone</h1>
+          <p class="subhead">CBT Application Form – Public Submission (Draft → Preview → Final Submit)</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap main-wrap">
+    <!-- Progress bar (sticky on mobile) -->
+    <div class="bar-wrap" role="region" aria-label="Form progress">
+      <div class="progress" aria-hidden="true"><div id="pbar" class="progress-inner"></div></div>
+      <div class="progress-text"><span id="ptext">Step 1 of 4</span><span id="ppct">25%</span></div>
+    </div>
+
+    <!-- Step chips -->
+    <div class="steps" id="steps" aria-label="Steps">
+      <button type="button" class="chip active" data-step="0" aria-current="step"><span class="n">1</span> Personal</button>
+      <button type="button" class="chip" data-step="1"><span class="n">2</span> Academic</button>
+      <button type="button" class="chip" data-step="2"><span class="n">3</span> Professional</button>
+      <button type="button" class="chip" data-step="3"><span class="n">4</span> Documents &amp; Preview</button>
+    </div>
+
+    <div class="card">
+      <form id="appForm" novalidate>
+        <!-- STEP 1: Personal -->
+        <section class="grid-2" data-step-panel="0" aria-label="Personal details">
+          <div class="full">
+            <label class="req" for="CBT_Roll_Number">CBT_Roll_Number</label>
+            <input id="CBT_Roll_Number" name="CBT_Roll_Number" required autocomplete="off" />
+          </div>
+
+          <div>
+            <label class="req" for="NAME">NAME</label>
+            <input id="NAME" name="NAME" required autocomplete="name" />
+          </div>
+          <div>
+            <label class="req" for="Father_Name">Father_Name</label>
+            <input id="Father_Name" name="Father_Name" required />
+          </div>
+          <div>
+            <label class="req" for="DOB">DOB</label>
+            <input id="DOB" type="date" name="DOB" required />
+          </div>
+          <div>
+            <label class="req" for="Gender">Gender</label>
+            <select id="Gender" name="Gender" required>
+              <option value="">-- Select --</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+              <option>Prefer not to say</option>
+            </select>
+          </div>
+          <div>
+            <label class="req" for="WhatsApp_Number">WhatsApp_Number</label>
+            <input id="WhatsApp_Number" name="WhatsApp_Number" pattern="[0-9]{10}" placeholder="10-digit number" inputmode="numeric" required />
+          </div>
+          <div>
+            <label class="req" for="Email_ID">Email_ID</label>
+            <input id="Email_ID" type="email" name="Email_ID" required autocomplete="email" />
+          </div>
+          <div>
+            <label for="Working_In_Any_DAV">Working_In_Any_DAV</label>
+            <select id="Working_In_Any_DAV" name="Working_In_Any_DAV">
+              <option value="">-- Select --</option>
+              <option>Yes</option>
+              <option>No</option>
+            </select>
+          </div>
+          <div>
+            <label for="School_Code">School_Code</label>
+            <input id="School_Code" name="School_Code" />
+          </div>
+          <div>
+            <label class="req" for="Aadhar_Number">Aadhar_Number</label>
+            <input id="Aadhar_Number" name="Aadhar_Number" pattern="[0-9]{12}" placeholder="12-digit number" inputmode="numeric" required />
+          </div>
+          <div class="full">
+            <label class="req" for="Permanent_Address">Permanent_Address</label>
+            <textarea id="Permanent_Address" name="Permanent_Address" rows="2" required></textarea>
+          </div>
+          <div class="full">
+            <label class="req" for="Current_Address">Current_Address</label>
+            <textarea id="Current_Address" name="Current_Address" rows="2" required></textarea>
+          </div>
+        </section>
+
+        <!-- STEP 2: Academic -->
+        <section class="grid-2 hidden" data-step-panel="1" aria-label="Academic details">
+          <div>
+            <label class="req" for="X_YEAR">X_YEAR</label>
+            <input id="X_YEAR" name="X_YEAR" type="number" min="1900" max="2100" required />
+          </div>
+          <div>
+            <label class="req" for="X_BOARD">X_BOARD</label>
+            <input id="X_BOARD" name="X_BOARD" required />
+          </div>
+          <div>
+            <label class="req" for="X_PER">X_PER</label>
+            <input id="X_PER" name="X_PER" type="number" min="0" max="100" step="0.01" required />
+          </div>
+          <div>
+            <label class="req" for="XII_YEAR">XII_YEAR</label>
+            <input id="XII_YEAR" name="XII_YEAR" type="number" min="1900" max="2100" required />
+          </div>
+          <div>
+            <label class="req" for="XII_BOARD">XII_BOARD</label>
+            <input id="XII_BOARD" name="XII_BOARD" required />
+          </div>
+          <div>
+            <label class="req" for="XII_PER">XII_PER</label>
+            <input id="XII_PER" name="XII_PER" type="number" min="0" max="100" step="0.01" required />
+          </div>
+          <div>
+            <label for="GRAD_YEAR">GRAD_YEAR</label>
+            <input id="GRAD_YEAR" name="GRAD_YEAR" type="number" min="1900" max="2100" />
+          </div>
+          <div>
+            <label for="GRAD_UNIVERSITY">GRAD_UNIVERSITY</label>
+            <input id="GRAD_UNIVERSITY" name="GRAD_UNIVERSITY" />
+          </div>
+          <div>
+            <label for="GRAD_SUBJECTS">GRAD_SUBJECTS</label>
+            <input id="GRAD_SUBJECTS" name="GRAD_SUBJECTS" />
+          </div>
+          <div>
+            <label for="GRAD_PER">GRAD_PER</label>
+            <input id="GRAD_PER" name="GRAD_PER" type="number" min="0" max="100" step="0.01" />
+          </div>
+          <div>
+            <label for="PG_YEAR">PG_YEAR</label>
+            <input id="PG_YEAR" name="PG_YEAR" type="number" min="1900" max="2100" />
+          </div>
+          <div>
+            <label for="PG_UNIVERSITY">PG_UNIVERSITY</label>
+            <input id="PG_UNIVERSITY" name="PG_UNIVERSITY" />
+          </div>
+          <div>
+            <label for="PG_SUBJECTS">PG_SUBJECTS</label>
+            <input id="PG_SUBJECTS" name="PG_SUBJECTS" />
+          </div>
+          <div>
+            <label for="PG_PER">PG_PER</label>
+            <input id="PG_PER" name="PG_PER" type="number" min="0" max="100" step="0.01" />
+          </div>
+          <div>
+            <label for="TET_YEAR">TET_YEAR</label>
+            <input id="TET_YEAR" name="TET_YEAR" type="number" min="1900" max="2100" />
+          </div>
+          <div>
+            <label for="TET_LEVEL">TET_LEVEL</label>
+            <input id="TET_LEVEL" name="TET_LEVEL" />
+          </div>
+          <div>
+            <label for="TET_marks">TET_marks</label>
+            <input id="TET_marks" name="TET_marks" type="number" min="0" max="200" step="0.01" />
+          </div>
+        </section>
+
+        <!-- STEP 3: Professional -->
+        <section class="grid-2 hidden" data-step-panel="2" aria-label="Professional details">
+          <div>
+            <label class="req" for="POST">POST</label>
+            <input id="POST" name="POST" required />
+          </div>
+          <div>
+            <label class="req" for="Subject">Subject</label>
+            <input id="Subject" name="Subject" required />
+          </div>
+          <div class="full note">
+            If you are currently working in any DAV institution, add the School_Code in Personal section.
+          </div>
+        </section>
+
+        <!-- STEP 4: Documents & Preview -->
+        <section class="grid-2 hidden" data-step-panel="3" aria-label="Documents and preview">
+          <div class="full">
+            <label for="File_upload">Combined PDF (Aadhaar, PEC, CBT Application) – single file</label>
+            <input id="File_upload" type="file" name="File_upload" accept="application/pdf" />
+            <div class="hint">On submit, we’ll save this to SharePoint (Document Library) and store the link in your record.</div>
+          </div>
+
+          <div class="full">
+            <h3>Preview</h3>
+            <div id="previewBox" class="review-box hint">Click “Generate Preview” to review your details before final submission.</div>
+            <label class="confirm"><input type="checkbox" id="confirmCheck" disabled> I confirm that the above information is correct.</label>
+          </div>
+        </section>
+
+        <!-- Navigation / Actions -->
+        <div class="actions">
+          <div class="left">
+            <button type="button" class="secondary" id="prevBtn">← Back</button>
+          </div>
+          <div class="right">
+            <button type="button" class="secondary" id="saveDraftBtn">Save as Draft</button>
+            <button type="button" class="secondary" id="previewBtn">Generate Preview</button>
+            <button type="submit" id="nextOrFinalBtn">Next →</button>
+          </div>
+        </div>
+
+        <div class="hint">Mode: <strong id="modeLabel">LOCAL_PREVIEW</strong>. Switch to Power Automate in the script.</div>
+        <div id="err" class="error hidden" role="alert"></div>
+        <div id="log" class="hint" aria-live="polite"></div>
+      </form>
+    </div>
+
+    <footer class="footer">
+      Developed by: <strong>Nirender Prakash Singh, PGT, DAV PS Bhagalpur</strong>
+    </footer>
+  </main>
+
+  <script>
+    // ===========================
+    // CONFIG
+    // ===========================
+    const SUBMIT_MODE = "LOCAL_PREVIEW"; // "LOCAL_PREVIEW" | "POWER_AUTOMATE"
+    const FLOW_URL = "https://YOUR_FLOW_URL_HERE"; // Power Automate HTTP POST URL
+    const SEND_FILE_AS_BASE64 = true;  // send PDF as base64 + name
+
+    // ===========================
+    // HELPERS & STATE
+    // ===========================
+    const $ = (s, r=document)=>r.querySelector(s);
+    const $$ = (s, r=document)=>Array.from(r.querySelectorAll(s));
+    const steps = $$("#steps .chip");
+    const panels = $$("[data-step-panel]");
+    const errBox = $("#err"), logBox = $("#log"), modeLabel = $("#modeLabel");
+    const pbar = $("#pbar"), ptext = $("#ptext"), ppct = $("#ppct");
+    const previewBox = $("#previewBox"), confirmCheck = $("#confirmCheck");
+    const saveDraftBtn = $("#saveDraftBtn"), previewBtn = $("#previewBtn"), nextOrFinalBtn = $("#nextOrFinalBtn");
+    modeLabel.textContent = SUBMIT_MODE;
+
+    let current = 0;
+    let previewReady = false; // require preview before Final Submit
+
+    function updateStepUI(){
+      steps.forEach((c,i)=>c.classList.toggle("active", i===current));
+      panels.forEach((p,i)=>p.classList.toggle("hidden", i!==current));
+      $("#prevBtn").disabled = current===0;
+
+      const last = panels.length - 1;
+      const onLast = current===last;
+      previewBtn.classList.toggle("hidden", !onLast);
+
+      if (onLast) {
+        nextOrFinalBtn.textContent = "Final Submit";
+        nextOrFinalBtn.disabled = !(previewReady && confirmCheck.checked);
+      } else {
+        nextOrFinalBtn.textContent = "Next →";
+        nextOrFinalBtn.disabled = false;
+      }
+
+      const pct = Math.round(((current+1)/panels.length)*100);
+      pbar.style.width = pct + "%";
+      ptext.textContent = `Step ${current+1} of ${panels.length}`;
+      ppct.textContent = pct + "%";
+    }
+    updateStepUI();
+
+    function showError(msg){ errBox.textContent = msg||""; errBox.classList.toggle("hidden", !msg); }
+
+    function formToObject(formEl){
+      const fd = new FormData(formEl);
+      const obj = {};
+      for (const [k,v] of fd.entries()){
+        if (obj[k] !== undefined) {
+          if (!Array.isArray(obj[k])) obj[k] = [obj[k]];
+          obj[k].push(v);
+        } else {
+          obj[k] = v;
+        }
+      }
+      return obj;
+    }
+
+    function validateCurrentStep(){
+      showError("");
+      const panel = panels[current];
+      const inputs = $$("input, select, textarea", panel);
+      for (const el of inputs) {
+        if (el.hasAttribute("required") && !el.value) { el.focus(); return `Please fill: "${el.name}"`; }
+        if (el.pattern && el.value && !(new RegExp("^"+el.pattern+"$").test(el.value))) {
+          el.focus(); return `Invalid value for "${el.name}"`;
+        }
+      }
+      return null;
+    }
+
+    async function fileToBase64(file){
+      if (!file) return null;
+      return new Promise((resolve, reject)=>{
+        const r = new FileReader();
+        r.onload=()=>resolve((r.result||"").toString().split(",")[1]||"");
+        r.onerror=reject;
+        r.readAsDataURL(file);
+      });
+    }
+
+    function renderPreview(data){
+      const entries = Object.entries(data);
+      if (!entries.length) { previewBox.textContent = "No data."; return; }
+      // Avoid dumping large base64 in preview
+      const filtered = entries.filter(([k]) => !/File_upload_base64/i.test(k));
+      const html = filtered.map(([k,v]) => `
+        <div><strong>${k}</strong></div><div>${(v===undefined||v==="")?"<span class='hint'>—</span>":String(v)}</div>
+      `).join("");
+      previewBox.innerHTML = `<div class="kv">${html}</div>`;
+    }
+
+    function lockForm(){
+      $$("input, select, textarea, button").forEach(el => { el.disabled = true; });
+    }
+
+    // NAV
+    $("#prevBtn").addEventListener("click", ()=>{ if (current>0){ current--; updateStepUI(); } });
+
+    // Save as Draft → Status: Draft
+    saveDraftBtn.addEventListener("click", async ()=>{
+      const err = validateCurrentStep();
+      if (err){ showError(err); return; }
+
+      const payload = formToObject($("#appForm"));
+      payload.Status = "Draft";
+
+      const fileInput = $("#File_upload");
+      if (SEND_FILE_AS_BASE64 && fileInput?.files?.length) {
+        payload.File_upload_name = fileInput.files[0].name;
+        payload.File_upload_base64 = await fileToBase64(fileInput.files[0]);
+      }
+
+      if (SUBMIT_MODE === "LOCAL_PREVIEW") {
+        logBox.textContent = "Saved as Draft (local preview). Payload:\n\n" + JSON.stringify(payload, null, 2);
+        alert("Draft captured locally. Switch to POWER_AUTOMATE to save to SharePoint.");
+        return;
+      }
+      try{
+        const resp = await fetch(FLOW_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(payload) });
+        const text = await resp.text();
+        logBox.textContent = `Draft sent. Status: ${resp.status}\n\nResponse:\n${text}`;
+        alert(resp.ok ? "Draft saved to SharePoint." : "Draft failed—see log.");
+      }catch(ex){
+        console.error(ex); showError("Network error while saving draft.");
+      }
+    });
+
+    // Generate Preview → required before final
+    previewBtn.addEventListener("click", ()=>{
+      if (current !== panels.length - 1) return;
+      const err = validateCurrentStep();
+      if (err){ showError(err); return; }
+
+      const data = formToObject($("#appForm"));
+      renderPreview(data);
+      previewReady = true;
+      confirmCheck.disabled = false;
+      nextOrFinalBtn.disabled = !confirmCheck.checked;
+      alert("Preview generated below. Please review and tick the confirmation checkbox.");
+    });
+
+    // Confirmation checkbox toggles Final Submit
+    confirmCheck.addEventListener("change", ()=>{
+      if (current === panels.length - 1) {
+        nextOrFinalBtn.disabled = !(previewReady && confirmCheck.checked);
+      }
+    });
+
+    // Next or Final Submit
+    nextOrFinalBtn.addEventListener("click", async (e)=>{
+      e.preventDefault();
+
+      if (current < panels.length - 1) {
+        const err = validateCurrentStep();
+        if (err){ showError(err); return; }
+        current++; updateStepUI();
+        return;
+      }
+
+      if (!previewReady || !confirmCheck.checked) {
+        showError("Please generate preview and tick the confirmation checkbox before final submission.");
+        return;
+      }
+
+      const formEl = $("#appForm");
+      const payload = formToObject(formEl);
+      payload.Status = "Final";
+
+      const fileInput = $("#File_upload");
+      if (SEND_FILE_AS_BASE64 && fileInput?.files?.[0]) {
+        payload.File_upload_name = fileInput.files[0].name;
+        payload.File_upload_base64 = await fileToBase64(fileInput.files[0]);
+      }
+
+      if (SUBMIT_MODE === "LOCAL_PREVIEW") {
+        logBox.textContent = "Final (local preview). Payload:\n\n" + JSON.stringify(payload, null, 2);
+        alert("Final captured locally. Switch to POWER_AUTOMATE to submit to SharePoint.");
+        return;
+      }
+
+      try{
+        const resp = await fetch(FLOW_URL, {
+          method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(payload)
+        });
+        const text = await resp.text();
+        logBox.textContent = `Final sent. Status: ${resp.status}\n\nResponse:\n${text}`;
+
+        if (resp.ok) {
+          alert("Submitted successfully. Your application is now FINAL and locked.");
+          lockForm();
+        } else {
+          try { const j = JSON.parse(text); if (j && j.message) showError(j.message); else showError("Submission failed. See log."); }
+          catch { showError("Submission failed. See log."); }
+        }
+      }catch(ex){
+        console.error(ex);
+        showError("Network error while submitting. See console/log.");
+      }
+    });
+
+    // Allow clicking step chips to jump (optional)
+    steps.forEach((chip, idx)=>chip.addEventListener("click", ()=>{
+      current = idx; updateStepUI();
+      // Scroll to top of form when step changes (mobile ergonomics)
+      document.querySelector(".main-wrap").scrollIntoView({behavior:"smooth", block:"start"});
+    }));
+  </script>
+</body>
+</html>
