@@ -5,20 +5,15 @@
   <title>DAV Public Schools, Bihar Zone – CBT Application</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Preload + stylesheet for better performance -->
-  <link rel="preload" href="assets/css/app.css" as="style">
-  <link rel="stylesheet" href="assets/css/app.css">
+  <!-- Load CSS -->
+  <link rel="preload" href="assets/css/app.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="assets/css/app.css"></noscript>
-
-  <meta name="description" content="CBT Application Form for DAV Public Schools, Bihar Zone (Draft → Preview → Final Submit)">
 </head>
 <body>
-
-  <!-- Header / Branding -->
   <header class="header">
     <div class="wrap">
       <div class="title">
-        <img src="assets/img/DAVlogo.png" alt="DAV Public Schools logo" class="dav-logo" width="64" height="64">
+        <img src="assets/img/DAVlogo.png" alt="DAV Public Schools logo" class="dav-logo">
         <div>
           <h1>DAV Public Schools, Bihar Zone</h1>
           <p class="subhead">CBT Application Form – Public Submission (Draft → Preview → Final Submit)</p>
@@ -26,7 +21,7 @@
       </div>
     </div>
   </header>
-
+  <!-- ... -->
   <main class="wrap main-wrap">
     <!-- Progress bar (sticky on mobile) -->
     <div class="bar-wrap" role="region" aria-label="Form progress">
