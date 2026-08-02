@@ -1,443 +1,813 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>DAV Public Schools, Bihar Zone – CBT Application</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAV CBT – Candidate Data Submission</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0c1f3f;--navy2:#162d55;--gold:#c8a84b;--gold2:#e8c96a;
+  --cream:#f7f3ed;--paper:#fdfaf6;--text:#1c1c2e;--muted:#7a7a8c;
+  --border:#ddd5c0;--green:#065f46;--red:#991b1b;
+  --shadow:0 4px 32px rgba(12,31,63,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
 
-  <!-- Load CSS -->
-  <link rel="preload" href="assets/css/app.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="assets/css/app.css"></noscript>
+/* ─── HEADER ─── */
+header{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);
+  padding:0;box-shadow:0 3px 20px rgba(0,0,0,.3);position:sticky;top:0;z-index:200
+}
+.hdr-inner{
+  max-width:920px;margin:0 auto;padding:16px 24px;
+  display:flex;align-items:center;gap:16px
+}
+.hdr-emblem{
+  width:56px;height:56px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Libre Baskerville',serif;font-size:1.25rem;
+  font-weight:700;color:var(--navy);letter-spacing:-.02em;
+  box-shadow:0 0 0 3px rgba(200,168,75,.3)
+}
+.hdr-text h1{
+  font-family:'Libre Baskerville',serif;font-size:1.15rem;
+  color:#fff;letter-spacing:.01em
+}
+.hdr-text p{font-size:.75rem;color:var(--gold2);letter-spacing:.08em;text-transform:uppercase;margin-top:3px;font-weight:300}
+.hdr-right{margin-left:auto}
+.hdr-right a{
+  color:var(--gold2);font-size:.78rem;text-decoration:none;
+  border:1px solid rgba(200,168,75,.4);padding:6px 14px;border-radius:6px;
+  transition:all .2s
+}
+.hdr-right a:hover{background:rgba(200,168,75,.15)}
+
+/* ─── WRAPPER ─── */
+.wrap{max-width:920px;margin:0 auto;padding:40px 20px 80px}
+
+/* ─── STEP 1 – LOOKUP ─── */
+.lookup-box{
+  background:var(--paper);border-radius:18px;border:1px solid var(--border);
+  box-shadow:var(--shadow);padding:40px;margin-bottom:28px;
+  animation:fadeUp .5s ease both
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.lookup-box h2{font-family:'Libre Baskerville',serif;font-size:1.5rem;color:var(--navy);margin-bottom:6px}
+.lookup-box .sub{color:var(--muted);font-size:.88rem;margin-bottom:24px;line-height:1.5}
+.input-row{display:flex;gap:10px;flex-wrap:wrap}
+.input-row input{
+  flex:1;min-width:200px;padding:13px 16px;
+  border:1.5px solid var(--border);border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:.95rem;
+  background:var(--cream);outline:none;transition:border-color .2s
+}
+.input-row input:focus{border-color:var(--gold);background:#fff}
+.btn{
+  padding:13px 26px;border:none;border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:600;
+  cursor:pointer;transition:all .2s;white-space:nowrap
+}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-navy:hover{background:var(--navy2)}
+.btn-navy:disabled{background:#94a3b8;cursor:not-allowed}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#b8912a);color:var(--navy);font-weight:700}
+.btn-gold:hover{opacity:.9;transform:translateY(-1px)}
+.btn-gold:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-outline{background:transparent;color:var(--navy);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--gold)}
+
+/* ─── ALERTS ─── */
+.alert{display:none;align-items:flex-start;gap:10px;padding:13px 16px;border-radius:10px;font-size:.87rem;margin-top:14px}
+.alert.show{display:flex}
+.alert-err{background:#fef2f2;border:1px solid #fca5a5;color:var(--red)}
+.alert-ok{background:#f0fdf4;border:1px solid #86efac;color:var(--green)}
+.alert-info{background:#eff6ff;border:1px solid #93c5fd;color:#1d4ed8}
+.alert-warn{background:#fffbeb;border:1px solid #fcd34d;color:#92400e}
+
+/* ─── PREVIEW (already submitted) ─── */
+#preview-section{display:none;animation:fadeUp .5s ease both}
+.preview-card{
+  background:var(--paper);border-radius:18px;border:2px solid #86efac;
+  box-shadow:var(--shadow);padding:36px
+}
+.badge-ok{
+  display:inline-flex;align-items:center;gap:7px;
+  background:#dcfce7;color:var(--green);border-radius:100px;
+  padding:5px 16px;font-size:.8rem;font-weight:700;margin-bottom:22px;
+  letter-spacing:.04em;text-transform:uppercase
+}
+.preview-title{font-family:'Libre Baskerville',serif;font-size:1.45rem;color:var(--navy);margin-bottom:4px}
+.preview-sub{color:var(--muted);font-size:.87rem;margin-bottom:28px}
+.data-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.ditem{background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:13px 15px}
+.dlabel{font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:4px}
+.dvalue{font-size:.9rem;font-weight:500;word-break:break-all}
+.dvalue a{color:var(--navy);text-underline-offset:3px}
+.sec-divider{grid-column:1/-1;margin-top:4px;margin-bottom:4px}
+.sec-divider h4{font-family:'Libre Baskerville',serif;font-size:.9rem;color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:7px;letter-spacing:.04em}
+
+/* ─── FORM ─── */
+#form-section{display:none;animation:fadeUp .5s ease both}
+/* Progress bar */
+.progress-wrap{margin-bottom:32px}
+.progress-label{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-bottom:8px}
+.progress-track{height:6px;background:var(--border);border-radius:100px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:100px;transition:width .4s ease}
+
+.form-card{
+  background:var(--paper);border-radius:16px;border:1px solid var(--border);
+  box-shadow:var(--shadow);overflow:hidden;margin-bottom:18px
+}
+.sec-hdr{
+  background:linear-gradient(90deg,var(--navy),var(--navy2));
+  padding:16px 26px;display:flex;align-items:center;gap:12px
+}
+.sec-num{
+  width:27px;height:27px;border-radius:50%;
+  background:var(--gold);color:var(--navy);font-weight:700;
+  font-size:.82rem;display:flex;align-items:center;justify-content:center;flex-shrink:0
+}
+.sec-hdr h3{color:#fff;font-family:'Libre Baskerville',serif;font-size:.95rem;letter-spacing:.03em}
+.sec-body{padding:26px}
+
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.full{grid-column:1/-1}
+.fg.half2{grid-column:span 2}
+label.lbl{font-size:.73rem;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.07em}
+label.lbl .req{color:#dc2626;margin-left:2px}
+input[type=text],input[type=email],input[type=tel],
+input[type=number],input[type=date],select,textarea{
+  padding:11px 13px;border:1.5px solid var(--border);border-radius:8px;
+  font-family:'DM Sans',sans-serif;font-size:.9rem;background:var(--cream);
+  color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;width:100%
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,168,75,.15);background:#fff
+}
+input[readonly]{background:#f1f5f9;color:var(--muted);cursor:not-allowed}
+.hint{font-size:.73rem;color:var(--muted);margin-top:2px}
+.dav-toggle{display:flex;gap:10px;flex-wrap:wrap}
+.toggle-btn{
+  padding:9px 18px;border:1.5px solid var(--border);border-radius:8px;
+  font-family:'DM Sans',sans-serif;font-size:.88rem;cursor:pointer;
+  background:var(--cream);transition:all .2s;font-weight:500
+}
+.toggle-btn.active{border-color:var(--gold);background:rgba(200,168,75,.1);color:var(--navy);font-weight:700}
+
+/* File upload */
+.file-zone{
+  border:2px dashed var(--border);border-radius:12px;padding:28px;
+  text-align:center;cursor:pointer;transition:all .2s;background:var(--cream)
+}
+.file-zone:hover,.file-zone.drag{border-color:var(--gold);background:rgba(200,168,75,.06)}
+.file-zone input{display:none}
+.file-icon{font-size:2rem;margin-bottom:8px}
+.file-zone p{color:var(--muted);font-size:.88rem}
+.file-zone strong{color:var(--navy)}
+.file-chosen{
+  display:none;align-items:center;gap:10px;
+  background:#eff6ff;border:1.5px solid #93c5fd;border-radius:10px;
+  padding:12px 14px;margin-top:10px
+}
+.file-chosen.show{display:flex}
+.file-chosen span{font-size:.88rem;color:#1d4ed8;flex:1;word-break:break-all}
+.file-chosen button{background:none;border:none;color:#64748b;cursor:pointer;font-size:1.1rem;padding:2px 6px}
+
+/* Review box */
+#review-box{
+  display:none;background:var(--paper);border-radius:16px;
+  border:1px solid var(--border);box-shadow:var(--shadow);padding:36px;margin-bottom:18px;
+  animation:fadeUp .4s ease both
+}
+#review-box h2{font-family:'Libre Baskerville',serif;font-size:1.3rem;color:var(--navy);margin-bottom:4px}
+#review-box .sub{color:var(--muted);font-size:.87rem;margin-bottom:26px}
+.review-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:11px;margin-bottom:24px}
+.submit-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+
+/* Loader */
+.spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn-loading .spinner{display:inline-block}
+.btn-loading .btn-text{display:none}
+
+/* ─── FINAL SUCCESS ─── */
+#success-section{
+  display:none;text-align:center;padding:60px 20px;
+  animation:fadeUp .5s ease both
+}
+.success-icon{font-size:5rem;margin-bottom:16px}
+#success-section h2{font-family:'Libre Baskerville',serif;font-size:2rem;color:var(--navy);margin-bottom:10px}
+#success-section p{color:var(--muted);max-width:500px;margin:0 auto;line-height:1.6}
+
+@media(max-width:600px){
+  .fgrid{grid-template-columns:1fr}
+  .fg.full,.fg.half2{grid-column:auto}
+  .hdr-text h1{font-size:1rem}
+}
+</style>
 </head>
 <body>
-  <header class="header">
-    <div class="wrap">
-      <div class="title">
-        <img src="assets/img/DAVlogo.png" alt="DAV Public Schools logo" class="dav-logo">
-        <div>
-          <h1>DAV Public Schools, Bihar Zone</h1>
-          <p class="subhead">CBT Application Form – Public Submission (Draft → Preview → Final Submit)</p>
+
+<header>
+  <div class="hdr-inner">
+    <div class="hdr-emblem">DAV</div>
+    <div class="hdr-text">
+      <h1>DAV Management Committee</h1>
+      <p>CBT Qualified Candidates – Data Submission Portal</p>
+    </div>
+    <div class="hdr-right"><a href="admin.html">Admin ↗</a></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- STEP 1: LOOKUP -->
+  <div class="lookup-box" id="lookup-box">
+    <h2>Candidate Verification</h2>
+    <p class="sub">Enter your CBT Roll Number to begin. If you have already submitted your details, your previous entry will be shown.</p>
+    <div class="input-row">
+      <input type="text" id="roll-input" placeholder="Enter CBT Roll Number (e.g. DAV2024001)" autocomplete="off">
+      <button class="btn btn-navy" id="lookup-btn" onclick="lookupRoll()">
+        <span class="btn-text">Verify</span>
+        <div class="spinner"></div>
+      </button>
+    </div>
+    <div class="alert alert-err" id="lookup-err">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="lookup-err-msg">Error message</span>
+    </div>
+  </div>
+
+  <!-- ALREADY SUBMITTED VIEW -->
+  <div id="preview-section">
+    <div class="preview-card">
+      <div class="badge-ok">✓ Already Submitted</div>
+      <h2 class="preview-title" id="pv-name">—</h2>
+      <p class="preview-sub">Your details have been recorded. You cannot edit or re-submit. Please contact the administrator if any correction is required.</p>
+      <div class="data-grid" id="preview-grid"></div>
+    </div>
+  </div>
+
+  <!-- FORM SECTION -->
+  <div id="form-section">
+
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Form Progress</span><span id="prog-pct">0%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- S1: Personal -->
+    <div class="form-card">
+      <div class="sec-hdr"><div class="sec-num">1</div><h3>Personal Information</h3></div>
+      <div class="sec-body">
+        <div class="fgrid">
+          <div class="fg">
+            <label class="lbl">Full Name <span class="req">*</span></label>
+            <input type="text" id="f-name" placeholder="As per certificates" oninput="updateProgress()">
+          </div>
+          <div class="fg">
+            <label class="lbl">Father's Name <span class="req">*</span></label>
+            <input type="text" id="f-father" placeholder="Father's full name" oninput="updateProgress()">
+          </div>
+          <div class="fg">
+            <label class="lbl">Date of Birth <span class="req">*</span></label>
+            <input type="date" id="f-dob" oninput="updateProgress()">
+          </div>
+          <div class="fg">
+            <label class="lbl">Gender <span class="req">*</span></label>
+            <select id="f-gender" onchange="updateProgress()">
+              <option value="">-- Select --</option>
+              <option>Male</option><option>Female</option><option>Other</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="lbl">CBT Roll Number <span class="req">*</span></label>
+            <input type="text" id="f-roll" readonly>
+            <span class="hint">Auto-filled from verification</span>
+          </div>
+          <div class="fg">
+            <label class="lbl">Post Applied For <span class="req">*</span></label>
+            <select id="f-post" onchange="updateProgress()">
+              <option value="">-- Select Post --</option>
+              <option>PGT</option><option>TGT</option><option>PRT</option>
+              <option>Lab Assistant</option><option>Librarian</option><option>Other</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="lbl">Subject <span class="req">*</span></label>
+            <input type="text" id="f-subject" placeholder="e.g. Mathematics, English" oninput="updateProgress()">
+          </div>
+          <div class="fg">
+            <label class="lbl">WhatsApp Number <span class="req">*</span></label>
+            <input type="tel" id="f-whatsapp" placeholder="10-digit mobile number" maxlength="10" oninput="updateProgress()">
+          </div>
+          <div class="fg">
+            <label class="lbl">Email ID <span class="req">*</span></label>
+            <input type="email" id="f-email" placeholder="your@email.com" oninput="updateProgress()">
+          </div>
+          <div class="fg">
+            <label class="lbl">Aadhaar Number <span class="req">*</span></label>
+            <input type="text" id="f-aadhar" placeholder="12-digit Aadhaar" maxlength="12" oninput="updateProgress()">
+          </div>
+          <div class="fg full">
+            <label class="lbl">Permanent Address <span class="req">*</span></label>
+            <textarea id="f-perm-addr" rows="2" placeholder="Full permanent address" oninput="updateProgress()"></textarea>
+          </div>
+          <div class="fg full">
+            <label class="lbl">Current Address <span class="req">*</span></label>
+            <textarea id="f-curr-addr" rows="2" placeholder="Current residential address" oninput="updateProgress()"></textarea>
+          </div>
+          <div class="fg full">
+            <label class="lbl">Currently Working in Any DAV School? <span class="req">*</span></label>
+            <div class="dav-toggle">
+              <button class="toggle-btn" onclick="setDAV('Yes',this)">Yes</button>
+              <button class="toggle-btn" onclick="setDAV('No',this)">No</button>
+            </div>
+          </div>
+          <div class="fg" id="school-code-grp" style="display:none">
+            <label class="lbl">School Code</label>
+            <input type="text" id="f-school-code" placeholder="DAV School Code" oninput="updateProgress()">
+          </div>
         </div>
       </div>
     </div>
-  </header>
-  <!-- ... -->
-  <main class="wrap main-wrap">
-    <!-- Progress bar (sticky on mobile) -->
-    <div class="bar-wrap" role="region" aria-label="Form progress">
-      <div class="progress" aria-hidden="true"><div id="pbar" class="progress-inner"></div></div>
-      <div class="progress-text"><span id="ptext">Step 1 of 4</span><span id="ppct">25%</span></div>
-    </div>
 
-    <!-- Step chips -->
-    <div class="steps" id="steps" aria-label="Steps">
-      <button type="button" class="chip active" data-step="0" aria-current="step"><span class="n">1</span> Personal</button>
-      <button type="button" class="chip" data-step="1"><span class="n">2</span> Academic</button>
-      <button type="button" class="chip" data-step="2"><span class="n">3</span> Professional</button>
-      <button type="button" class="chip" data-step="3"><span class="n">4</span> Documents &amp; Preview</button>
-    </div>
-
-    <div class="card">
-      <form id="appForm" novalidate>
-        <!-- STEP 1: Personal -->
-        <section class="grid-2" data-step-panel="0" aria-label="Personal details">
-          <div class="full">
-            <label class="req" for="CBT_Roll_Number">CBT_Roll_Number</label>
-            <input id="CBT_Roll_Number" name="CBT_Roll_Number" required autocomplete="off" />
+    <!-- S2: Class X -->
+    <div class="form-card">
+      <div class="sec-hdr"><div class="sec-num">2</div><h3>Class X (Matriculation)</h3></div>
+      <div class="sec-body">
+        <div class="fgrid">
+          <div class="fg">
+            <label class="lbl">Passing Year <span class="req">*</span></label>
+            <input type="number" id="f-10yr" min="1980" max="2030" placeholder="YYYY" oninput="updateProgress()">
           </div>
-
-          <div>
-            <label class="req" for="NAME">NAME</label>
-            <input id="NAME" name="NAME" required autocomplete="name" />
+          <div class="fg">
+            <label class="lbl">Board <span class="req">*</span></label>
+            <input type="text" id="f-10board" placeholder="e.g. CBSE, HPBOSE" oninput="updateProgress()">
           </div>
-          <div>
-            <label class="req" for="Father_Name">Father_Name</label>
-            <input id="Father_Name" name="Father_Name" required />
-          </div>
-          <div>
-            <label class="req" for="DOB">DOB</label>
-            <input id="DOB" type="date" name="DOB" required />
-          </div>
-          <div>
-            <label class="req" for="Gender">Gender</label>
-            <select id="Gender" name="Gender" required>
-              <option value="">-- Select --</option>
-              <option>Male</option>
-              <option>Female</option>
-            </select>
-          </div>
-          <div>
-            <label class="req" for="WhatsApp_Number">WhatsApp_Number</label>
-            <input id="WhatsApp_Number" name="WhatsApp_Number" pattern="[0-9]{10}" placeholder="10-digit number" inputmode="numeric" required />
-          </div>
-          <div>
-            <label class="req" for="Email_ID">Email_ID</label>
-            <input id="Email_ID" type="email" name="Email_ID" required autocomplete="email" />
-          </div>
-          <div>
-            <label for="Working_In_Any_DAV">Working_In_Any_DAV</label>
-            <select id="Working_In_Any_DAV" name="Working_In_Any_DAV">
-              <option value="">-- Select --</option>
-              <option>Yes</option>
-              <option>No</option>
-            </select>
-          </div>
-          <div>
-            <label for="School_Code">School_Code</label>
-            <input id="School_Code" name="School_Code" />
-          </div>
-          <div>
-            <label class="req" for="Aadhar_Number">Aadhar_Number</label>
-            <input id="Aadhar_Number" name="Aadhar_Number" pattern="[0-9]{12}" placeholder="12-digit number" inputmode="numeric" required />
-          </div>
-          <div class="full">
-            <label class="req" for="Permanent_Address">Permanent_Address</label>
-            <textarea id="Permanent_Address" name="Permanent_Address" rows="2" required></textarea>
-          </div>
-          <div class="full">
-            <label class="req" for="Current_Address">Current_Address</label>
-            <textarea id="Current_Address" name="Current_Address" rows="2" required></textarea>
-          </div>
-        </section>
-
-        <!-- STEP 2: Academic -->
-        <section class="grid-2 hidden" data-step-panel="1" aria-label="Academic details">
-          <div>
-            <label class="req" for="X_YEAR">X_YEAR</label>
-            <input id="X_YEAR" name="X_YEAR" type="number" min="1900" max="2100" required />
-          </div>
-          <div>
-            <label class="req" for="X_BOARD">X_BOARD</label>
-            <input id="X_BOARD" name="X_BOARD" required />
-          </div>
-          <div>
-            <label class="req" for="X_PER">X_PER</label>
-            <input id="X_PER" name="X_PER" type="number" min="0" max="100" step="0.01" required />
-          </div>
-          <div>
-            <label class="req" for="XII_YEAR">XII_YEAR</label>
-            <input id="XII_YEAR" name="XII_YEAR" type="number" min="1900" max="2100" required />
-          </div>
-          <div>
-            <label class="req" for="XII_BOARD">XII_BOARD</label>
-            <input id="XII_BOARD" name="XII_BOARD" required />
-          </div>
-          <div>
-            <label class="req" for="XII_PER">XII_PER</label>
-            <input id="XII_PER" name="XII_PER" type="number" min="0" max="100" step="0.01" required />
-          </div>
-          <div>
-            <label for="GRAD_YEAR">GRAD_YEAR</label>
-            <input id="GRAD_YEAR" name="GRAD_YEAR" type="number" min="1900" max="2100" />
-          </div>
-          <div>
-            <label for="GRAD_UNIVERSITY">GRAD_UNIVERSITY</label>
-            <input id="GRAD_UNIVERSITY" name="GRAD_UNIVERSITY" />
-          </div>
-          <div>
-            <label for="GRAD_SUBJECTS">GRAD_SUBJECTS</label>
-            <input id="GRAD_SUBJECTS" name="GRAD_SUBJECTS" />
-          </div>
-          <div>
-            <label for="GRAD_PER">GRAD_PER</label>
-            <input id="GRAD_PER" name="GRAD_PER" type="number" min="0" max="100" step="0.01" />
-          </div>
-          <div>
-            <label for="PG_YEAR">PG_YEAR</label>
-            <input id="PG_YEAR" name="PG_YEAR" type="number" min="1900" max="2100" />
-          </div>
-          <div>
-            <label for="PG_UNIVERSITY">PG_UNIVERSITY</label>
-            <input id="PG_UNIVERSITY" name="PG_UNIVERSITY" />
-          </div>
-          <div>
-            <label for="PG_SUBJECTS">PG_SUBJECTS</label>
-            <input id="PG_SUBJECTS" name="PG_SUBJECTS" />
-          </div>
-          <div>
-            <label for="PG_PER">PG_PER</label>
-            <input id="PG_PER" name="PG_PER" type="number" min="0" max="100" step="0.01" />
-          </div>
-          <div>
-            <label for="TET_YEAR">TET_YEAR</label>
-            <input id="TET_YEAR" name="TET_YEAR" type="number" min="1900" max="2100" />
-          </div>
-          <div>
-            <label for="TET_LEVEL">TET_LEVEL</label>
-            <input id="TET_LEVEL" name="TET_LEVEL" />
-          </div>
-          <div>
-            <label for="TET_marks">TET_marks</label>
-            <input id="TET_marks" name="TET_marks" type="number" min="0" max="200" step="0.01" />
-          </div>
-        </section>
-
-        <!-- STEP 3: Professional -->
-        <section class="grid-2 hidden" data-step-panel="2" aria-label="Professional details">
-          <div>
-            <label class="req" for="POST">POST</label>
-            <input id="POST" name="POST" required />
-          </div>
-          <div>
-            <label class="req" for="Subject">Subject</label>
-            <input id="Subject" name="Subject" required />
-          </div>
-          <div class="full note">
-            If you are currently working in any DAV institution, add the School_Code in Personal section.
-          </div>
-        </section>
-
-        <!-- STEP 4: Documents & Preview -->
-        <section class="grid-2 hidden" data-step-panel="3" aria-label="Documents and preview">
-          <div class="full">
-            <label for="File_upload">Combined PDF (Aadhaar, PEC, CBT Application) – single file</label>
-            <input id="File_upload" type="file" name="File_upload" accept="application/pdf" />
-            <div class="hint">On submit, we’ll save this to SharePoint (Document Library) and store the link in your record.</div>
-          </div>
-
-          <div class="full">
-            <h3>Preview</h3>
-            <div id="previewBox" class="review-box hint">Click “Generate Preview” to review your details before final submission.</div>
-            <label class="confirm"><input type="checkbox" id="confirmCheck" disabled> I confirm that the above information is correct.</label>
-          </div>
-        </section>
-
-        <!-- Navigation / Actions -->
-        <div class="actions">
-          <div class="left">
-            <button type="button" class="secondary" id="prevBtn">← Back</button>
-          </div>
-          <div class="right">
-            <button type="button" class="secondary" id="saveDraftBtn">Save as Draft</button>
-            <button type="button" class="secondary" id="previewBtn">Generate Preview</button>
-            <button type="submit" id="nextOrFinalBtn">Next →</button>
+          <div class="fg">
+            <label class="lbl">Percentage / CGPA <span class="req">*</span></label>
+            <input type="text" id="f-10per" placeholder="e.g. 85.4%" oninput="updateProgress()">
           </div>
         </div>
-
-        <div class="hint">Mode: <strong id="modeLabel">LOCAL_PREVIEW</strong>. Switch to Power Automate in the script.</div>
-        <div id="err" class="error hidden" role="alert"></div>
-        <div id="log" class="hint" aria-live="polite"></div>
-      </form>
+      </div>
     </div>
 
-    <footer class="footer">
-      Developed by: <strong>Nirender Prakash Singh, PGT, DAV PS Bhagalpur</strong>
-    </footer>
-  </main>
+    <!-- S3: Class XII -->
+    <div class="form-card">
+      <div class="sec-hdr"><div class="sec-num">3</div><h3>Class XII (Senior Secondary)</h3></div>
+      <div class="sec-body">
+        <div class="fgrid">
+          <div class="fg">
+            <label class="lbl">Passing Year <span class="req">*</span></label>
+            <input type="number" id="f-12yr" min="1980" max="2030" placeholder="YYYY" oninput="updateProgress()">
+          </div>
+          <div class="fg">
+            <label class="lbl">Board <span class="req">*</span></label>
+            <input type="text" id="f-12board" placeholder="e.g. CBSE, HPBOSE" oninput="updateProgress()">
+          </div>
+          <div class="fg">
+            <label class="lbl">Percentage / CGPA <span class="req">*</span></label>
+            <input type="text" id="f-12per" placeholder="e.g. 78.2%" oninput="updateProgress()">
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <script>
-    // ===========================
-    // CONFIG
-    // ===========================
-    const SUBMIT_MODE = "LOCAL_PREVIEW"; // "LOCAL_PREVIEW" | "POWER_AUTOMATE"
-    const FLOW_URL = "https://YOUR_FLOW_URL_HERE"; // Power Automate HTTP POST URL
-    const SEND_FILE_AS_BASE64 = true;  // send PDF as base64 + name
+    <!-- S4: Graduation -->
+    <div class="form-card">
+      <div class="sec-hdr"><div class="sec-num">4</div><h3>Graduation</h3></div>
+      <div class="sec-body">
+        <div class="fgrid">
+          <div class="fg">
+            <label class="lbl">Passing Year <span class="req">*</span></label>
+            <input type="number" id="f-gradyr" min="1980" max="2030" placeholder="YYYY" oninput="updateProgress()">
+          </div>
+          <div class="fg">
+            <label class="lbl">University <span class="req">*</span></label>
+            <input type="text" id="f-graduniv" placeholder="University name" oninput="updateProgress()">
+          </div>
+          <div class="fg">
+            <label class="lbl">Subjects <span class="req">*</span></label>
+            <input type="text" id="f-gradsub" placeholder="e.g. Physics, Chemistry, Math" oninput="updateProgress()">
+          </div>
+          <div class="fg">
+            <label class="lbl">Percentage / CGPA <span class="req">*</span></label>
+            <input type="text" id="f-gradper" placeholder="e.g. 72.5%" oninput="updateProgress()">
+          </div>
+        </div>
+      </div>
+    </div>
 
-    // ===========================
-    // HELPERS & STATE
-    // ===========================
-    const $ = (s, r=document)=>r.querySelector(s);
-    const $$ = (s, r=document)=>Array.from(r.querySelectorAll(s));
-    const steps = $$("#steps .chip");
-    const panels = $$("[data-step-panel]");
-    const errBox = $("#err"), logBox = $("#log"), modeLabel = $("#modeLabel");
-    const pbar = $("#pbar"), ptext = $("#ptext"), ppct = $("#ppct");
-    const previewBox = $("#previewBox"), confirmCheck = $("#confirmCheck");
-    const saveDraftBtn = $("#saveDraftBtn"), previewBtn = $("#previewBtn"), nextOrFinalBtn = $("#nextOrFinalBtn");
-    modeLabel.textContent = SUBMIT_MODE;
+    <!-- S5: PG -->
+    <div class="form-card">
+      <div class="sec-hdr"><div class="sec-num">5</div><h3>Post Graduation <small style="color:#aac4f0;font-size:.78rem;font-weight:400">(if applicable)</small></h3></div>
+      <div class="sec-body">
+        <div class="fgrid">
+          <div class="fg">
+            <label class="lbl">Passing Year</label>
+            <input type="number" id="f-pgyr" min="1980" max="2030" placeholder="YYYY" oninput="updateProgress()">
+          </div>
+          <div class="fg">
+            <label class="lbl">University</label>
+            <input type="text" id="f-pguniv" placeholder="University name" oninput="updateProgress()">
+          </div>
+          <div class="fg">
+            <label class="lbl">Subjects</label>
+            <input type="text" id="f-pgsub" placeholder="e.g. M.Sc Physics" oninput="updateProgress()">
+          </div>
+          <div class="fg">
+            <label class="lbl">Percentage / CGPA</label>
+            <input type="text" id="f-pgper" placeholder="e.g. 68.0%" oninput="updateProgress()">
+          </div>
+        </div>
+      </div>
+    </div>
 
-    let current = 0;
-    let previewReady = false; // require preview before Final Submit
+    <!-- S6: TET -->
+    <div class="form-card">
+      <div class="sec-hdr"><div class="sec-num">6</div><h3>TET Details</h3></div>
+      <div class="sec-body">
+        <div class="fgrid">
+          <div class="fg">
+            <label class="lbl">TET Year</label>
+            <input type="number" id="f-tetyr" min="2000" max="2030" placeholder="YYYY" oninput="updateProgress()">
+          </div>
+          <div class="fg">
+            <label class="lbl">TET Level</label>
+            <select id="f-tetlevel" onchange="updateProgress()">
+              <option value="">-- Select --</option>
+              <option>Level 1 (Class I–V)</option>
+              <option>Level 2 (Class VI–VIII)</option>
+              <option>Both Level 1 & 2</option>
+              <option>Not Applicable</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="lbl">TET Marks</label>
+            <input type="text" id="f-tetmarks" placeholder="e.g. 112/150" oninput="updateProgress()">
+          </div>
+        </div>
+      </div>
+    </div>
 
-    function updateStepUI(){
-      steps.forEach((c,i)=>c.classList.toggle("active", i===current));
-      panels.forEach((p,i)=>p.classList.toggle("hidden", i!==current));
-      $("#prevBtn").disabled = current===0;
+    <!-- S7: File Upload -->
+    <div class="form-card">
+      <div class="sec-hdr"><div class="sec-num">7</div><h3>Document Upload</h3></div>
+      <div class="sec-body">
+        <div class="fg full">
+          <label class="lbl">Upload Combined PDF of Certificates <span class="req">*</span></label>
+          <div class="file-zone" id="file-zone" onclick="document.getElementById('file-input').click()" ondragover="dragOver(event)" ondragleave="dragLeave()" ondrop="dropFile(event)">
+            <input type="file" id="file-input" accept="application/pdf" onchange="fileChosen(this)">
+            <div class="file-icon">📄</div>
+            <p><strong>Click to upload</strong> or drag and drop</p>
+            <p style="margin-top:5px;font-size:.78rem">PDF only · Maximum 1 MB</p>
+          </div>
+          <div class="file-chosen" id="file-chosen-box">
+            <span>📎 <span id="file-name-span">—</span></span>
+            <button type="button" onclick="clearFile()">✕</button>
+          </div>
+          <div class="alert alert-err" id="file-err"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span id="file-err-msg"></span></div>
+        </div>
+      </div>
+    </div>
 
-      const last = panels.length - 1;
-      const onLast = current===last;
-      previewBtn.classList.toggle("hidden", !onLast);
+    <!-- PREVIEW BEFORE SUBMIT -->
+    <div id="review-box">
+      <h2>Review Your Details</h2>
+      <p class="sub">Please verify all the information below before final submission. You will <strong>not</strong> be able to edit after submitting.</p>
+      <div class="review-grid" id="review-grid"></div>
+      <div class="submit-row">
+        <button class="btn btn-gold" id="submit-btn" onclick="submitForm()">
+          <span class="btn-text">✓ Confirm & Submit</span>
+          <div class="spinner"></div>
+        </button>
+        <button class="btn btn-outline" onclick="cancelReview()">← Edit Details</button>
+      </div>
+      <div class="alert alert-err" id="submit-err" style="margin-top:14px"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span id="submit-err-msg"></span></div>
+    </div>
 
-      if (onLast) {
-        nextOrFinalBtn.textContent = "Final Submit";
-        nextOrFinalBtn.disabled = !(previewReady && confirmCheck.checked);
-      } else {
-        nextOrFinalBtn.textContent = "Next →";
-        nextOrFinalBtn.disabled = false;
-      }
+    <div style="display:flex;justify-content:flex-end;margin-top:4px">
+      <button class="btn btn-navy" onclick="showReview()">Preview & Review →</button>
+    </div>
 
-      const pct = Math.round(((current+1)/panels.length)*100);
-      pbar.style.width = pct + "%";
-      ptext.textContent = `Step ${current+1} of ${panels.length}`;
-      ppct.textContent = pct + "%";
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="success-section">
+    <div class="success-icon">🎉</div>
+    <h2>Submitted Successfully!</h2>
+    <p>Your details have been recorded. Please take a screenshot of this page for your reference. No further action is needed.</p>
+    <p style="margin-top:12px;font-size:.88rem">Roll Number: <strong id="s-roll">—</strong></p>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+// ══════════════════════════════════════════════
+//  🔧 PASTE YOUR FIREBASE CONFIG HERE
+// ══════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+// ══════════════════════════════════════════════
+
+const app = initializeApp(firebaseConfig);
+window._db  = getFirestore(app);
+window._sto = getStorage(app);
+window._fns = { doc, setDoc, getDoc, ref, uploadBytes, getDownloadURL };
+window.dispatchEvent(new Event('fbReady'));
+</script>
+
+<script>
+// ── globals ──
+let currentRoll = '';
+let workingInDAV = '';
+let selectedFile = null;
+
+// ── wait for firebase ──
+window.addEventListener('fbReady', () => { /* ready */ });
+
+function setLoading(btn, on){
+  btn.classList.toggle('btn-loading', on);
+  btn.disabled = on;
+}
+function showAlert(id, msg){
+  const el = document.getElementById(id);
+  el.querySelector('span') && (el.querySelector('span').textContent = msg);
+  el.classList.add('show');
+}
+function hideAlert(id){ document.getElementById(id).classList.remove('show'); }
+
+// ── LOOKUP ──
+async function lookupRoll(){
+  const roll = document.getElementById('roll-input').value.trim();
+  if(!roll){ showAlert('lookup-err','Please enter your CBT Roll Number.'); return; }
+  hideAlert('lookup-err');
+  const btn = document.getElementById('lookup-btn');
+  setLoading(btn, true);
+  try {
+    await waitFB();
+    const snap = await window._fns.getDoc(window._fns.doc(window._db,'applicants', roll));
+    if(snap.exists()){
+      showPreview(snap.data());
+    } else {
+      currentRoll = roll;
+      document.getElementById('f-roll').value = roll;
+      document.getElementById('lookup-box').style.display = 'none';
+      document.getElementById('form-section').style.display = 'block';
+      updateProgress();
     }
-    updateStepUI();
+  } catch(e){
+    showAlert('lookup-err','Connection error. Please check your internet and try again.');
+    console.error(e);
+  }
+  setLoading(btn, false);
+}
+window.lookupRoll = lookupRoll;
 
-    function showError(msg){ errBox.textContent = msg||""; errBox.classList.toggle("hidden", !msg); }
+function waitFB(){
+  return new Promise(res => {
+    if(window._db) return res();
+    window.addEventListener('fbReady', res, {once:true});
+  });
+}
 
-    function formToObject(formEl){
-      const fd = new FormData(formEl);
-      const obj = {};
-      for (const [k,v] of fd.entries()){
-        if (obj[k] !== undefined) {
-          if (!Array.isArray(obj[k])) obj[k] = [obj[k]];
-          obj[k].push(v);
-        } else {
-          obj[k] = v;
-        }
-      }
-      return obj;
-    }
+// ── DAV toggle ──
+function setDAV(val, btn){
+  workingInDAV = val;
+  document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('school-code-grp').style.display = val==='Yes' ? 'flex' : 'none';
+  updateProgress();
+}
+window.setDAV = setDAV;
 
-    function validateCurrentStep(){
-      showError("");
-      const panel = panels[current];
-      const inputs = $$("input, select, textarea", panel);
-      for (const el of inputs) {
-        if (el.hasAttribute("required") && !el.value) { el.focus(); return `Please fill: "${el.name}"`; }
-        if (el.pattern && el.value && !(new RegExp("^"+el.pattern+"$").test(el.value))) {
-          el.focus(); return `Invalid value for "${el.name}"`;
-        }
-      }
-      return null;
-    }
+// ── Progress ──
+function updateProgress(){
+  const requiredIds = ['f-name','f-father','f-dob','f-gender','f-post','f-subject',
+    'f-whatsapp','f-email','f-aadhar','f-perm-addr','f-curr-addr',
+    'f-10yr','f-10board','f-10per','f-12yr','f-12board','f-12per',
+    'f-gradyr','f-graduniv','f-gradsub','f-gradper'];
+  let filled = requiredIds.filter(id => {
+    const el = document.getElementById(id);
+    return el && el.value.trim().length > 0;
+  }).length;
+  if(workingInDAV) filled++;
+  const total = requiredIds.length + 1;
+  const pct = Math.round((filled/total)*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-pct').textContent = pct+'%';
+}
 
-    async function fileToBase64(file){
-      if (!file) return null;
-      return new Promise((resolve, reject)=>{
-        const r = new FileReader();
-        r.onload=()=>resolve((r.result||"").toString().split(",")[1]||"");
-        r.onerror=reject;
-        r.readAsDataURL(file);
-      });
-    }
+// ── File ──
+function fileChosen(input){
+  const file = input.files[0];
+  if(!file) return;
+  if(file.type !== 'application/pdf'){ showAlert('file-err','Only PDF files are accepted.'); input.value=''; return; }
+  if(file.size > 1*1024*1024){ showAlert('file-err','File exceeds 1 MB limit. Please compress and try again.'); input.value=''; return; }
+  hideAlert('file-err');
+  selectedFile = file;
+  document.getElementById('file-name-span').textContent = file.name;
+  document.getElementById('file-chosen-box').classList.add('show');
+  updateProgress();
+}
+function clearFile(){
+  selectedFile = null;
+  document.getElementById('file-input').value='';
+  document.getElementById('file-chosen-box').classList.remove('show');
+}
+function dragOver(e){ e.preventDefault(); document.getElementById('file-zone').classList.add('drag'); }
+function dragLeave(){ document.getElementById('file-zone').classList.remove('drag'); }
+function dropFile(e){
+  e.preventDefault(); dragLeave();
+  const file = e.dataTransfer.files[0];
+  if(file){
+    document.getElementById('file-input').files = e.dataTransfer.files;
+    fileChosen(document.getElementById('file-input'));
+  }
+}
+window.fileChosen=fileChosen; window.clearFile=clearFile;
+window.dragOver=dragOver; window.dragLeave=dragLeave; window.dropFile=dropFile;
 
-    function renderPreview(data){
-      const entries = Object.entries(data);
-      if (!entries.length) { previewBox.textContent = "No data."; return; }
-      // Avoid dumping large base64 in preview
-      const filtered = entries.filter(([k]) => !/File_upload_base64/i.test(k));
-      const html = filtered.map(([k,v]) => `
-        <div><strong>${k}</strong></div><div>${(v===undefined||v==="")?"<span class='hint'>—</span>":String(v)}</div>
-      `).join("");
-      previewBox.innerHTML = `<div class="kv">${html}</div>`;
-    }
+// ── Collect form data ──
+function collectData(){
+  return {
+    NAME: v('f-name'), FATHER_NAME: v('f-father'), DOB: v('f-dob'),
+    GENDER: v('f-gender'), CBT_ROLL_NUMBER: v('f-roll'),
+    POST: v('f-post'), SUBJECT: v('f-subject'),
+    WHATSAPP: v('f-whatsapp'), EMAIL: v('f-email'),
+    WORKING_IN_DAV: workingInDAV, SCHOOL_CODE: v('f-school-code'),
+    AADHAR: v('f-aadhar'),
+    PERMANENT_ADDRESS: v('f-perm-addr'), CURRENT_ADDRESS: v('f-curr-addr'),
+    '10_YEAR': v('f-10yr'), '10_BOARD': v('f-10board'), '10_PER': v('f-10per'),
+    '12_YEAR': v('f-12yr'), '12_BOARD': v('f-12board'), '12_PER': v('f-12per'),
+    GRAD_YEAR: v('f-gradyr'), GRAD_UNIVERSITY: v('f-graduniv'),
+    GRAD_SUBJECTS: v('f-gradsub'), GRAD_PER: v('f-gradper'),
+    PG_YEAR: v('f-pgyr'), PG_UNIVERSITY: v('f-pguniv'),
+    PG_SUBJECTS: v('f-pgsub'), PG_PER: v('f-pgper'),
+    TET_YEAR: v('f-tetyr'), TET_LEVEL: v('f-tetlevel'), TET_MARKS: v('f-tetmarks'),
+    SUBMITTED_AT: new Date().toISOString()
+  };
+}
+function v(id){ const e=document.getElementById(id); return e?e.value.trim():''; }
 
-    function lockForm(){
-      $$("input, select, textarea, button").forEach(el => { el.disabled = true; });
-    }
+// ── REVIEW ──
+function showReview(){
+  const data = collectData();
+  const required = ['NAME','FATHER_NAME','DOB','GENDER','CBT_ROLL_NUMBER','POST','SUBJECT',
+    'WHATSAPP','EMAIL','AADHAR','PERMANENT_ADDRESS','CURRENT_ADDRESS',
+    '10_YEAR','10_BOARD','10_PER','12_YEAR','12_BOARD','12_PER',
+    'GRAD_YEAR','GRAD_UNIVERSITY','GRAD_SUBJECTS','GRAD_PER'];
+  const missing = required.filter(k => !data[k]);
+  if(!workingInDAV){ alert('Please indicate if you are working in any DAV school.'); return; }
+  if(missing.length){ alert('Please fill all required fields (marked with *). Missing: '+missing.join(', ')); return; }
+  if(!selectedFile){ alert('Please upload your combined PDF document.'); return; }
 
-    // NAV
-    $("#prevBtn").addEventListener("click", ()=>{ if (current>0){ current--; updateStepUI(); } });
+  const grid = document.getElementById('review-grid');
+  grid.innerHTML = '';
+  const labels = {
+    NAME:'Full Name',FATHER_NAME:"Father's Name",DOB:'Date of Birth',GENDER:'Gender',
+    CBT_ROLL_NUMBER:'CBT Roll Number',POST:'Post',SUBJECT:'Subject',
+    WHATSAPP:'WhatsApp',EMAIL:'Email',WORKING_IN_DAV:'Working in DAV',
+    SCHOOL_CODE:'School Code',AADHAR:'Aadhaar No.',
+    PERMANENT_ADDRESS:'Permanent Address',CURRENT_ADDRESS:'Current Address',
+    '10_YEAR':'Class X Year','10_BOARD':'Class X Board','10_PER':'Class X %',
+    '12_YEAR':'Class XII Year','12_BOARD':'Class XII Board','12_PER':'Class XII %',
+    GRAD_YEAR:'Grad. Year',GRAD_UNIVERSITY:'Grad. University',
+    GRAD_SUBJECTS:'Grad. Subjects',GRAD_PER:'Grad. %',
+    PG_YEAR:'PG Year',PG_UNIVERSITY:'PG University',PG_SUBJECTS:'PG Subjects',PG_PER:'PG %',
+    TET_YEAR:'TET Year',TET_LEVEL:'TET Level',TET_MARKS:'TET Marks'
+  };
+  Object.entries(labels).forEach(([k,label])=>{
+    if(!data[k]) return;
+    const d = document.createElement('div');
+    d.className = 'ditem';
+    d.innerHTML = `<div class="dlabel">${label}</div><div class="dvalue">${data[k]}</div>`;
+    grid.appendChild(d);
+  });
+  // file
+  const fd = document.createElement('div');
+  fd.className = 'ditem';
+  fd.innerHTML = `<div class="dlabel">Document PDF</div><div class="dvalue">📎 ${selectedFile.name}</div>`;
+  grid.appendChild(fd);
 
-    // Save as Draft → Status: Draft
-    saveDraftBtn.addEventListener("click", async ()=>{
-      const err = validateCurrentStep();
-      if (err){ showError(err); return; }
+  document.getElementById('review-box').style.display = 'block';
+  document.getElementById('review-box').scrollIntoView({behavior:'smooth'});
+}
+function cancelReview(){
+  document.getElementById('review-box').style.display = 'none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+window.showReview=showReview; window.cancelReview=cancelReview;
 
-      const payload = formToObject($("#appForm"));
-      payload.Status = "Draft";
+// ── SUBMIT ──
+async function submitForm(){
+  const btn = document.getElementById('submit-btn');
+  setLoading(btn, true);
+  hideAlert('submit-err');
+  try {
+    await waitFB();
+    // Re-check not already submitted
+    const existing = await window._fns.getDoc(window._fns.doc(window._db,'applicants',currentRoll));
+    if(existing.exists()){ showAlert('submit-err','This Roll Number has already been submitted.'); setLoading(btn,false); return; }
 
-      const fileInput = $("#File_upload");
-      if (SEND_FILE_AS_BASE64 && fileInput?.files?.length) {
-        payload.File_upload_name = fileInput.files[0].name;
-        payload.File_upload_base64 = await fileToBase64(fileInput.files[0]);
-      }
+    // Upload PDF
+    const fileRef = window._fns.ref(window._sto, `applicants/${currentRoll}/${selectedFile.name}`);
+    await window._fns.uploadBytes(fileRef, selectedFile);
+    const fileURL = await window._fns.getDownloadURL(fileRef);
 
-      if (SUBMIT_MODE === "LOCAL_PREVIEW") {
-        logBox.textContent = "Saved as Draft (local preview). Payload:\n\n" + JSON.stringify(payload, null, 2);
-        alert("Draft captured locally. Switch to POWER_AUTOMATE to save to SharePoint.");
-        return;
-      }
-      try{
-        const resp = await fetch(FLOW_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(payload) });
-        const text = await resp.text();
-        logBox.textContent = `Draft sent. Status: ${resp.status}\n\nResponse:\n${text}`;
-        alert(resp.ok ? "Draft saved to SharePoint." : "Draft failed—see log.");
-      }catch(ex){
-        console.error(ex); showError("Network error while saving draft.");
-      }
+    const data = collectData();
+    data.FILE_URL = fileURL;
+    data.FILE_NAME = selectedFile.name;
+
+    await window._fns.setDoc(window._fns.doc(window._db,'applicants',currentRoll), data);
+
+    // Success
+    document.getElementById('form-section').style.display='none';
+    document.getElementById('review-box').style.display='none';
+    document.getElementById('success-section').style.display='block';
+    document.getElementById('s-roll').textContent = currentRoll;
+    window.scrollTo({top:0,behavior:'smooth'});
+
+  } catch(e){
+    showAlert('submit-err','Submission failed: '+e.message);
+    console.error(e);
+  }
+  setLoading(btn, false);
+}
+window.submitForm = submitForm;
+
+// ── PREVIEW already-submitted ──
+function showPreview(data){
+  document.getElementById('lookup-box').style.display='none';
+  document.getElementById('preview-section').style.display='block';
+  document.getElementById('pv-name').textContent = data.NAME || '—';
+  const grid = document.getElementById('preview-grid');
+  grid.innerHTML='';
+  const sections = [
+    { title:'Personal', keys:['NAME','FATHER_NAME','DOB','GENDER','CBT_ROLL_NUMBER','POST','SUBJECT','WHATSAPP','EMAIL','WORKING_IN_DAV','SCHOOL_CODE','AADHAR','PERMANENT_ADDRESS','CURRENT_ADDRESS'] },
+    { title:'Academic – Class X', keys:['10_YEAR','10_BOARD','10_PER'] },
+    { title:'Academic – Class XII', keys:['12_YEAR','12_BOARD','12_PER'] },
+    { title:'Graduation', keys:['GRAD_YEAR','GRAD_UNIVERSITY','GRAD_SUBJECTS','GRAD_PER'] },
+    { title:'Post Graduation', keys:['PG_YEAR','PG_UNIVERSITY','PG_SUBJECTS','PG_PER'] },
+    { title:'TET', keys:['TET_YEAR','TET_LEVEL','TET_MARKS'] },
+  ];
+  const labels = {
+    NAME:'Full Name',FATHER_NAME:"Father's Name",DOB:'Date of Birth',GENDER:'Gender',
+    CBT_ROLL_NUMBER:'CBT Roll Number',POST:'Post',SUBJECT:'Subject',
+    WHATSAPP:'WhatsApp',EMAIL:'Email',WORKING_IN_DAV:'Working in DAV',
+    SCHOOL_CODE:'School Code',AADHAR:'Aadhaar',
+    PERMANENT_ADDRESS:'Permanent Addr.',CURRENT_ADDRESS:'Current Addr.',
+    '10_YEAR':'Year','10_BOARD':'Board','10_PER':'Percentage',
+    '12_YEAR':'Year','12_BOARD':'Board','12_PER':'Percentage',
+    GRAD_YEAR:'Year',GRAD_UNIVERSITY:'University',GRAD_SUBJECTS:'Subjects',GRAD_PER:'Percentage',
+    PG_YEAR:'Year',PG_UNIVERSITY:'University',PG_SUBJECTS:'Subjects',PG_PER:'Percentage',
+    TET_YEAR:'Year',TET_LEVEL:'Level',TET_MARKS:'Marks'
+  };
+  sections.forEach(sec => {
+    const div = document.createElement('div'); div.className='sec-divider';
+    div.innerHTML=`<h4>${sec.title}</h4>`; grid.appendChild(div);
+    sec.keys.forEach(k => {
+      if(!data[k]) return;
+      const d = document.createElement('div'); d.className='ditem';
+      d.innerHTML=`<div class="dlabel">${labels[k]||k}</div><div class="dvalue">${data[k]}</div>`;
+      grid.appendChild(d);
     });
+  });
+  if(data.FILE_URL){
+    const fdiv = document.createElement('div'); fdiv.className='sec-divider';
+    fdiv.innerHTML='<h4>Document</h4>'; grid.appendChild(fdiv);
+    const fd = document.createElement('div'); fd.className='ditem';
+    fd.innerHTML=`<div class="dlabel">Uploaded PDF</div><div class="dvalue"><a href="${data.FILE_URL}" target="_blank">📎 ${data.FILE_NAME||'View Document'}</a></div>`;
+    grid.appendChild(fd);
+  }
+  const sub = document.createElement('div'); sub.className='sec-divider';
+  sub.innerHTML='<h4>Submission Info</h4>'; grid.appendChild(sub);
+  if(data.SUBMITTED_AT){
+    const sd = document.createElement('div'); sd.className='ditem';
+    sd.innerHTML=`<div class="dlabel">Submitted On</div><div class="dvalue">${new Date(data.SUBMITTED_AT).toLocaleString('en-IN')}</div>`;
+    grid.appendChild(sd);
+  }
+}
 
-    // Generate Preview → required before final
-    previewBtn.addEventListener("click", ()=>{
-      if (current !== panels.length - 1) return;
-      const err = validateCurrentStep();
-      if (err){ showError(err); return; }
-
-      const data = formToObject($("#appForm"));
-      renderPreview(data);
-      previewReady = true;
-      confirmCheck.disabled = false;
-      nextOrFinalBtn.disabled = !confirmCheck.checked;
-      alert("Preview generated below. Please review and tick the confirmation checkbox.");
-    });
-
-    // Confirmation checkbox toggles Final Submit
-    confirmCheck.addEventListener("change", ()=>{
-      if (current === panels.length - 1) {
-        nextOrFinalBtn.disabled = !(previewReady && confirmCheck.checked);
-      }
-    });
-
-    // Next or Final Submit
-    nextOrFinalBtn.addEventListener("click", async (e)=>{
-      e.preventDefault();
-
-      if (current < panels.length - 1) {
-        const err = validateCurrentStep();
-        if (err){ showError(err); return; }
-        current++; updateStepUI();
-        return;
-      }
-
-      if (!previewReady || !confirmCheck.checked) {
-        showError("Please generate preview and tick the confirmation checkbox before final submission.");
-        return;
-      }
-
-      const formEl = $("#appForm");
-      const payload = formToObject(formEl);
-      payload.Status = "Final";
-
-      const fileInput = $("#File_upload");
-      if (SEND_FILE_AS_BASE64 && fileInput?.files?.[0]) {
-        payload.File_upload_name = fileInput.files[0].name;
-        payload.File_upload_base64 = await fileToBase64(fileInput.files[0]);
-      }
-
-      if (SUBMIT_MODE === "LOCAL_PREVIEW") {
-        logBox.textContent = "Final (local preview). Payload:\n\n" + JSON.stringify(payload, null, 2);
-        alert("Final captured locally. Switch to POWER_AUTOMATE to submit to SharePoint.");
-        return;
-      }
-
-      try{
-        const resp = await fetch(FLOW_URL, {
-          method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(payload)
-        });
-        const text = await resp.text();
-        logBox.textContent = `Final sent. Status: ${resp.status}\n\nResponse:\n${text}`;
-
-        if (resp.ok) {
-          alert("Submitted successfully. Your application is now FINAL and locked.");
-          lockForm();
-        } else {
-          try { const j = JSON.parse(text); if (j && j.message) showError(j.message); else showError("Submission failed. See log."); }
-          catch { showError("Submission failed. See log."); }
-        }
-      }catch(ex){
-        console.error(ex);
-        showError("Network error while submitting. See console/log.");
-      }
-    });
-
-    // Allow clicking step chips to jump (optional)
-    steps.forEach((chip, idx)=>chip.addEventListener("click", ()=>{
-      current = idx; updateStepUI();
-      // Scroll to top of form when step changes (mobile ergonomics)
-      document.querySelector(".main-wrap").scrollIntoView({behavior:"smooth", block:"start"});
-    }));
-  </script>
+// ── Enter key on roll input ──
+document.getElementById('roll-input').addEventListener('keydown', e => { if(e.key==='Enter') lookupRoll(); });
+</script>
 </body>
 </html>

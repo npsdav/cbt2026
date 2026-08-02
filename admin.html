@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAV CBT – Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- SheetJS for Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --navy:#0c1f3f;--navy2:#162d55;--gold:#c8a84b;--gold2:#e8c96a;
+  --cream:#f7f3ed;--paper:#fdfaf6;--text:#1c1c2e;--muted:#7a7a8c;
+  --border:#ddd5c0;--green:#065f46;--red:#991b1b;
+  --shadow:0 4px 32px rgba(12,31,63,.12)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--text);min-height:100vh}
+
+/* ─── LOGIN ─── */
+#login-screen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 60% 40%, #162d55 0%, #0c1f3f 60%, #07122a 100%);
+  padding:20px;
+}
+.login-card{
+  background:var(--paper);border-radius:20px;padding:48px 44px;
+  width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.4);
+  animation:popIn .4s cubic-bezier(.17,.67,.35,1.3) both
+}
+@keyframes popIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+.login-logo{
+  width:64px;height:64px;border-radius:50%;margin:0 auto 22px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Libre Baskerville',serif;font-size:1.4rem;font-weight:700;color:var(--navy)
+}
+.login-card h1{font-family:'Libre Baskerville',serif;font-size:1.5rem;color:var(--navy);text-align:center;margin-bottom:6px}
+.login-card p{text-align:center;color:var(--muted);font-size:.87rem;margin-bottom:32px}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+label.lbl{font-size:.73rem;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.07em}
+input[type=password],input[type=text]{
+  padding:12px 14px;border:1.5px solid var(--border);border-radius:9px;
+  font-family:'DM Sans',sans-serif;font-size:.95rem;background:var(--cream);
+  outline:none;transition:border-color .2s,box-shadow .2s
+}
+input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,168,75,.15);background:#fff}
+.btn-full{
+  width:100%;padding:13px;background:linear-gradient(135deg,var(--navy),var(--navy2));
+  color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;
+  font-size:.97rem;font-weight:700;cursor:pointer;transition:opacity .2s;
+  letter-spacing:.02em
+}
+.btn-full:hover{opacity:.88}
+.login-err{
+  display:none;margin-top:14px;padding:11px 14px;background:#fef2f2;
+  border:1px solid #fca5a5;color:var(--red);border-radius:8px;font-size:.85rem;text-align:center
+}
+.login-err.show{display:block}
+.login-note{text-align:center;font-size:.75rem;color:var(--muted);margin-top:20px;line-height:1.5}
+
+/* ─── DASHBOARD ─── */
+#dashboard{display:none;min-height:100vh;background:var(--cream)}
+header{
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  box-shadow:0 3px 20px rgba(0,0,0,.3)
+}
+.hdr-inner{
+  max-width:1200px;margin:0 auto;padding:16px 24px;
+  display:flex;align-items:center;gap:14px
+}
+.hdr-emblem{
+  width:48px;height:48px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Libre Baskerville',serif;font-size:1.1rem;font-weight:700;color:var(--navy)
+}
+.hdr-text h1{font-family:'Libre Baskerville',serif;font-size:1.1rem;color:#fff}
+.hdr-text p{font-size:.73rem;color:var(--gold2);letter-spacing:.07em;text-transform:uppercase;margin-top:2px}
+.hdr-actions{margin-left:auto;display:flex;gap:10px;align-items:center}
+.btn{padding:9px 20px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#b8912a);color:var(--navy)}
+.btn-gold:hover{opacity:.9}
+.btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.btn-ghost:hover{background:rgba(255,255,255,.2)}
+
+.dash-wrap{max-width:1200px;margin:0 auto;padding:32px 20px 60px}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:28px}
+.stat-card{
+  background:var(--paper);border-radius:14px;border:1px solid var(--border);
+  padding:20px 22px;box-shadow:var(--shadow)
+}
+.stat-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
+.stat-val{font-family:'Libre Baskerville',serif;font-size:2rem;color:var(--navy);font-weight:700}
+
+/* Toolbar */
+.toolbar{
+  background:var(--paper);border-radius:14px;border:1px solid var(--border);
+  padding:18px 22px;box-shadow:var(--shadow);margin-bottom:18px;
+  display:flex;gap:12px;flex-wrap:wrap;align-items:center
+}
+.search-input{
+  flex:1;min-width:200px;padding:10px 14px;border:1.5px solid var(--border);
+  border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;
+  background:var(--cream);outline:none;transition:border-color .2s
+}
+.search-input:focus{border-color:var(--gold)}
+.btn-sm{padding:9px 18px;font-size:.85rem}
+
+/* Table */
+.table-wrap{
+  background:var(--paper);border-radius:14px;border:1px solid var(--border);
+  box-shadow:var(--shadow);overflow:hidden
+}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.83rem}
+thead tr{background:var(--navy)}
+thead th{
+  padding:12px 14px;text-align:left;color:#fff;
+  font-weight:600;font-size:.75rem;text-transform:uppercase;
+  letter-spacing:.06em;white-space:nowrap
+}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+tbody tr:hover{background:rgba(200,168,75,.06)}
+tbody td{padding:11px 14px;vertical-align:middle;white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis}
+.tag{
+  display:inline-block;padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:700
+}
+.tag-yes{background:#dcfce7;color:var(--green)}
+.tag-no{background:#fef2f2;color:var(--red)}
+.no-data{text-align:center;padding:60px 20px;color:var(--muted)}
+
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-center{display:flex;align-items:center;justify-content:center;gap:10px;padding:60px 20px;color:var(--muted)}
+.spin-lg{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
+
+/* pagination */
+.pagination{display:flex;align-items:center;gap:8px;padding:16px 22px;border-top:1px solid var(--border);justify-content:flex-end;flex-wrap:wrap}
+.pg-btn{padding:6px 14px;border:1.5px solid var(--border);border-radius:7px;background:var(--cream);cursor:pointer;font-size:.82rem;transition:all .2s}
+.pg-btn:hover,.pg-btn.active{border-color:var(--gold);background:rgba(200,168,75,.12);font-weight:700}
+.pg-btn:disabled{opacity:.4;cursor:not-allowed}
+
+@media(max-width:600px){.hdr-text h1{font-size:.95rem}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">DAV</div>
+    <h1>Admin Portal</h1>
+    <p>Sign in to view and download candidate submissions</p>
+    <div class="form-group">
+      <label class="lbl">Admin Password</label>
+      <input type="password" id="pwd-input" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-full" onclick="doLogin()">Sign In →</button>
+    <div class="login-err" id="login-err">Incorrect password. Please try again.</div>
+    <p class="login-note">This portal is restricted to authorised administrators only.</p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <header>
+    <div class="hdr-inner">
+      <div class="hdr-emblem">DAV</div>
+      <div class="hdr-text">
+        <h1>CBT Data Portal — Admin</h1>
+        <p>Candidate Submissions Dashboard</p>
+      </div>
+      <div class="hdr-actions">
+        <button class="btn btn-gold" onclick="exportExcel()">⬇ Download Excel</button>
+        <button class="btn btn-ghost" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="dash-wrap">
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">Total Submissions</div><div class="stat-val" id="stat-total">—</div></div>
+      <div class="stat-card"><div class="stat-label">Working in DAV</div><div class="stat-val" id="stat-dav">—</div></div>
+      <div class="stat-card"><div class="stat-label">Not in DAV</div><div class="stat-val" id="stat-nodav">—</div></div>
+      <div class="stat-card"><div class="stat-label">With TET</div><div class="stat-val" id="stat-tet">—</div></div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <input class="search-input" type="text" id="search-box" placeholder="Search by Name, Roll No., Post, Subject…" oninput="filterTable()">
+      <button class="btn btn-gold btn-sm" onclick="loadData()">🔄 Refresh</button>
+      <button class="btn btn-sm" style="background:var(--navy);color:#fff" onclick="exportExcel()">⬇ Excel</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table id="data-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Name</th><th>Father's Name</th><th>DOB</th><th>Gender</th>
+              <th>CBT Roll No.</th><th>Post</th><th>Subject</th>
+              <th>WhatsApp</th><th>Email</th>
+              <th>In DAV?</th><th>School Code</th><th>Aadhaar</th>
+              <th>Perm. Address</th><th>Curr. Address</th>
+              <th>X Year</th><th>X Board</th><th>X %</th>
+              <th>XII Year</th><th>XII Board</th><th>XII %</th>
+              <th>Grad Year</th><th>Grad Univ.</th><th>Grad Subj.</th><th>Grad %</th>
+              <th>PG Year</th><th>PG Univ.</th><th>PG Subj.</th><th>PG %</th>
+              <th>TET Year</th><th>TET Level</th><th>TET Marks</th>
+              <th>Document</th><th>Submitted On</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <tr><td colspan="34" class="loading-center"><div class="spin-lg"></div>&nbsp;Loading data…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ══════════════════════════════════════════════
+//  🔧 PASTE YOUR FIREBASE CONFIG HERE (same as index.html)
+// ══════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+// ══════════════════════════════════════════════
+
+const app = initializeApp(firebaseConfig);
+window._db = getFirestore(app);
+window._getDocs = getDocs;
+window._collection = collection;
+window.dispatchEvent(new Event('fbReady'));
+</script>
+
+<script>
+// ════════════════════════════════════════════
+//  🔑 SET YOUR ADMIN PASSWORD HERE
+// ════════════════════════════════════════════
+const ADMIN_PASSWORD = "DAVAdmin@2024";
+// ════════════════════════════════════════════
+
+let allData = [];
+let filtered = [];
+const PAGE_SIZE = 25;
+let currentPage = 1;
+
+function doLogin(){
+  const pwd = document.getElementById('pwd-input').value;
+  if(pwd === ADMIN_PASSWORD){
+    sessionStorage.setItem('dav_admin','1');
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    loadData();
+  } else {
+    document.getElementById('login-err').classList.add('show');
+    document.getElementById('pwd-input').value='';
+  }
+}
+window.doLogin = doLogin;
+
+function logout(){
+  sessionStorage.removeItem('dav_admin');
+  location.reload();
+}
+window.logout = logout;
+
+// Auto-login if session exists
+if(sessionStorage.getItem('dav_admin')==='1'){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('dashboard').style.display='block';
+  window.addEventListener('fbReady', loadData);
+}
+
+async function loadData(){
+  document.getElementById('table-body').innerHTML='<tr><td colspan="34" class="loading-center"><div class="spin-lg"></div>&nbsp;Loading…</td></tr>';
+  try {
+    await waitFB();
+    const snap = await window._getDocs(window._collection(window._db,'applicants'));
+    allData = [];
+    snap.forEach(doc => allData.push(doc.data()));
+    allData.sort((a,b) => new Date(b.SUBMITTED_AT||0) - new Date(a.SUBMITTED_AT||0));
+    updateStats();
+    filtered = [...allData];
+    currentPage = 1;
+    renderTable();
+  } catch(e){
+    document.getElementById('table-body').innerHTML=`<tr><td colspan="34" style="text-align:center;padding:40px;color:var(--red)">Error loading data: ${e.message}</td></tr>`;
+  }
+}
+window.loadData = loadData;
+
+function waitFB(){
+  return new Promise(res => { if(window._db) res(); else window.addEventListener('fbReady',res,{once:true}); });
+}
+
+function updateStats(){
+  document.getElementById('stat-total').textContent = allData.length;
+  document.getElementById('stat-dav').textContent = allData.filter(d=>d.WORKING_IN_DAV==='Yes').length;
+  document.getElementById('stat-nodav').textContent = allData.filter(d=>d.WORKING_IN_DAV==='No').length;
+  document.getElementById('stat-tet').textContent = allData.filter(d=>d.TET_YEAR).length;
+}
+
+function filterTable(){
+  const q = document.getElementById('search-box').value.toLowerCase();
+  filtered = allData.filter(d =>
+    (d.NAME||'').toLowerCase().includes(q) ||
+    (d.CBT_ROLL_NUMBER||'').toLowerCase().includes(q) ||
+    (d.POST||'').toLowerCase().includes(q) ||
+    (d.SUBJECT||'').toLowerCase().includes(q) ||
+    (d.EMAIL||'').toLowerCase().includes(q) ||
+    (d.WHATSAPP||'').includes(q)
+  );
+  currentPage = 1;
+  renderTable();
+}
+window.filterTable = filterTable;
+
+function renderTable(){
+  const tbody = document.getElementById('table-body');
+  const start = (currentPage-1)*PAGE_SIZE;
+  const page = filtered.slice(start, start+PAGE_SIZE);
+
+  if(!page.length){
+    tbody.innerHTML='<tr><td colspan="34" class="no-data">No records found.</td></tr>';
+    document.getElementById('pagination').innerHTML='';
+    return;
+  }
+
+  tbody.innerHTML = page.map((d,i) => {
+    const n = start+i+1;
+    const submitted = d.SUBMITTED_AT ? new Date(d.SUBMITTED_AT).toLocaleString('en-IN') : '—';
+    const davTag = d.WORKING_IN_DAV==='Yes'
+      ? '<span class="tag tag-yes">Yes</span>'
+      : '<span class="tag tag-no">No</span>';
+    const fileLink = d.FILE_URL ? `<a href="${d.FILE_URL}" target="_blank" style="color:var(--navy)">📎 View</a>` : '—';
+    const c = (v) => `<td title="${v||''}">${v||'—'}</td>`;
+    return `<tr>
+      <td>${n}</td>
+      ${c(d.NAME)}${c(d.FATHER_NAME)}${c(d.DOB)}${c(d.GENDER)}
+      ${c(d.CBT_ROLL_NUMBER)}${c(d.POST)}${c(d.SUBJECT)}
+      ${c(d.WHATSAPP)}${c(d.EMAIL)}
+      <td>${davTag}</td>${c(d.SCHOOL_CODE)}${c(d.AADHAR)}
+      ${c(d.PERMANENT_ADDRESS)}${c(d.CURRENT_ADDRESS)}
+      ${c(d['10_YEAR'])}${c(d['10_BOARD'])}${c(d['10_PER'])}
+      ${c(d['12_YEAR'])}${c(d['12_BOARD'])}${c(d['12_PER'])}
+      ${c(d.GRAD_YEAR)}${c(d.GRAD_UNIVERSITY)}${c(d.GRAD_SUBJECTS)}${c(d.GRAD_PER)}
+      ${c(d.PG_YEAR)}${c(d.PG_UNIVERSITY)}${c(d.PG_SUBJECTS)}${c(d.PG_PER)}
+      ${c(d.TET_YEAR)}${c(d.TET_LEVEL)}${c(d.TET_MARKS)}
+      <td>${fileLink}</td><td>${submitted}</td>
+    </tr>`;
+  }).join('');
+
+  renderPagination();
+}
+
+function renderPagination(){
+  const total = Math.ceil(filtered.length / PAGE_SIZE);
+  if(total <= 1){ document.getElementById('pagination').innerHTML=''; return; }
+  let html = `<span style="font-size:.82rem;color:var(--muted)">Showing ${Math.min((currentPage-1)*PAGE_SIZE+1,filtered.length)}–${Math.min(currentPage*PAGE_SIZE,filtered.length)} of ${filtered.length}</span>`;
+  html += `<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹ Prev</button>`;
+  for(let i=1;i<=total;i++){
+    if(i===1||i===total||Math.abs(i-currentPage)<=1) html+=`<button class="pg-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    else if(Math.abs(i-currentPage)===2) html+='<span style="color:var(--muted);padding:0 4px">…</span>';
+  }
+  html += `<button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage===total?'disabled':''}>Next ›</button>`;
+  document.getElementById('pagination').innerHTML = html;
+}
+function goPage(p){ currentPage=p; renderTable(); window.scrollTo({top:300,behavior:'smooth'}); }
+window.goPage = goPage;
+
+// ── EXCEL EXPORT ──
+function exportExcel(){
+  if(!allData.length){ alert('No data to export.'); return; }
+  const headers = [
+    'S.No','Name','Father Name','DOB','Gender','CBT Roll Number','Post','Subject',
+    'WhatsApp Number','Email ID','Working In DAV','School Code','Aadhaar Number',
+    'Permanent Address','Current Address',
+    '10 Year','10 Board','10 %',
+    '12 Year','12 Board','12 %',
+    'Graduation Year','Graduation University','Graduation Subjects','Graduation %',
+    'PG Year','PG University','PG Subjects','PG %',
+    'TET Year','TET Level','TET Marks',
+    'Document URL','Submitted On'
+  ];
+  const rows = allData.map((d,i) => [
+    i+1, d.NAME, d.FATHER_NAME, d.DOB, d.GENDER,
+    d.CBT_ROLL_NUMBER, d.POST, d.SUBJECT,
+    d.WHATSAPP, d.EMAIL, d.WORKING_IN_DAV, d.SCHOOL_CODE, d.AADHAR,
+    d.PERMANENT_ADDRESS, d.CURRENT_ADDRESS,
+    d['10_YEAR'], d['10_BOARD'], d['10_PER'],
+    d['12_YEAR'], d['12_BOARD'], d['12_PER'],
+    d.GRAD_YEAR, d.GRAD_UNIVERSITY, d.GRAD_SUBJECTS, d.GRAD_PER,
+    d.PG_YEAR, d.PG_UNIVERSITY, d.PG_SUBJECTS, d.PG_PER,
+    d.TET_YEAR, d.TET_LEVEL, d.TET_MARKS,
+    d.FILE_URL, d.SUBMITTED_AT ? new Date(d.SUBMITTED_AT).toLocaleString('en-IN') : ''
+  ]);
+
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+
+  // Style header row
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  for(let c=range.s.c; c<=range.e.c; c++){
+    const cell = ws[XLSX.utils.encode_cell({r:0,c})];
+    if(cell) cell.s = {
+      font:{bold:true,color:{rgb:'FFFFFF'}},
+      fill:{fgColor:{rgb:'0C1F3F'}},
+      alignment:{horizontal:'center'}
+    };
+  }
+
+  // Set column widths
+  ws['!cols'] = headers.map((_,i) => ({ wch: [5,25,25,12,10,18,12,16,15,28,12,12,15,35,35,10,20,10,10,20,10,12,30,25,10,10,30,25,10,10,20,12,40,22][i] || 15 }));
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'CBT Submissions');
+
+  // Summary sheet
+  const summaryData = [
+    ['DAV CBT Data Export'],
+    ['Generated On', new Date().toLocaleString('en-IN')],
+    ['Total Records', allData.length],
+    ['Working in DAV', allData.filter(d=>d.WORKING_IN_DAV==='Yes').length],
+    ['Not in DAV', allData.filter(d=>d.WORKING_IN_DAV==='No').length],
+    ['With TET', allData.filter(d=>d.TET_YEAR).length],
+  ];
+  const ws2 = XLSX.utils.aoa_to_sheet(summaryData);
+  ws2['!cols'] = [{wch:20},{wch:25}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'Summary');
+
+  const date = new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb, `DAV_CBT_Submissions_${date}.xlsx`);
+}
+window.exportExcel = exportExcel;
+
+document.getElementById('pwd-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+</script>
+</body>
+</html>
